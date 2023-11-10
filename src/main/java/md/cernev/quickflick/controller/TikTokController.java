@@ -23,7 +23,7 @@ public class TikTokController {
 
   @GetMapping("/transcribe")
   @ResponseBody
-  public String transcribe(@RequestParam String url) {
-    return tikTokTranscriber.transcribe(url);
+  public String transcribe(@RequestParam String filename) {
+    return tikTokTranscriber.transcribe(filename);
   }
 }
