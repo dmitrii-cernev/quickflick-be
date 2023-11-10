@@ -1,37 +1,29 @@
 package md.cernev.quickflick.transcriber;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
 import software.amazon.awssdk.services.transcribe.model.*;
 
 @Service
 public class TikTokTranscriber implements Transcriber {
   public static final String MP4 = "mp4";
-  private static final Region region = Region.US_EAST_1;
+  public static final String TRANSCRIPTION_JOB_NAME = "my-first-transcription-job";
   private final TranscribeClient transcribeClient;
 
-  public TikTokTranscriber() {
-    transcribeClient = TranscribeClient.builder()
-        .credentialsProvider(getCredentials())
-        .region(region)
-        .build();
+  @Autowired
+  public TikTokTranscriber(TranscribeClient transcribeClient) {
+    this.transcribeClient = transcribeClient;
   }
 
   @Override
-  public String transcribe(Object o) {
+  public String transcribe(String filename) {
     String transcriptionJobName = startTranscriptionJob();
     return getTranscriptionJobFileUri(transcriptionJobName);
   }
 
-  private AwsCredentialsProvider getCredentials() {
-    return DefaultCredentialsProvider.create();
-  }
-
   private String startTranscriptionJob() {
-    String transcriptionJobName = "my-first-transcription-job";
+    String transcriptionJobName = TRANSCRIPTION_JOB_NAME;
     String mediaType = MP4;
     Media myMedia = Media.builder()
         .mediaFileUri("s3://quickflick-buckeet/Download.mp4")
@@ -56,8 +48,9 @@ public class TikTokTranscriber implements Transcriber {
         .build();
 
     GetTranscriptionJobResponse getTranscriptionJobResponse = transcribeClient.getTranscriptionJob(getTranscriptionJobRequest);
-    System.out.println(getTranscriptionJobResponse.transcriptionJob());
+    String transcriptFileUri = getTranscriptionJobResponse.transcriptionJob().transcript().transcriptFileUri();
+    System.out.println(transcriptFileUri);
 
-    return getTranscriptionJobResponse.transcriptionJob().transcript().transcriptFileUri();
+    return transcriptFileUri;
   }
 }
