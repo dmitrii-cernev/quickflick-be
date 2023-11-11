@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.transcribe.TranscribeClient;
 @Configuration
 public class AwsConfiguration {
   public static final Region REGION = Region.US_EAST_1;
+  public static final String BUCKET_NAME = "quickflick-buckeet";
 
   @Bean
   public TranscribeClient getTranscribeClient() {

@@ -21,19 +21,25 @@ public class TikTokScrapper implements Scrapper {
   public static final String RAPID_API_KEY = "e5d55f2ebdmsh1fdc26168bba541p18415cjsne46c1d57a3f9";
   public static final String USER_REGEX = "@([^\\/]+)";
   public static final String VIDEO_ID_REGEX = "\\/video\\/(\\d+)";
+  public static final String RAPID_API_TIKTOK = "tiktok82.p.rapidapi.com";
 
+  /**
+   * Scraps TikTok video from the given url and saves it to the local filesystem
+   *
+   * @param url - url of the TikTok video
+   */
   @Override
   public void scrap(String url) {
-    scrapUsingApi(url);
+    scrapUsingRapidApi(url);
   }
 
-  private void scrapUsingApi(String url) {
+  private void scrapUsingRapidApi(String url) {
     try {
       AsyncHttpClient client = new DefaultAsyncHttpClient();
       client
           .prepare("GET", TIKTOK_DOWNLOAD_API + "?video_url=" + url)
           .setHeader("X-RapidAPI-Key", RAPID_API_KEY)
-          .setHeader("X-RapidAPI-Host", "tiktok82.p.rapidapi.com")
+          .setHeader("X-RapidAPI-Host", RAPID_API_TIKTOK)
           .execute()
           .toCompletableFuture()
           .thenAccept(response -> {
