@@ -11,13 +11,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 @Service
-public class TikTokTranscriber implements Transcriber {
+public class VideoTranscriber implements Transcriber {
 
   private final AWSTranscribe awsTranscribe;
   private final AWSS3 awss3;
 
   @Autowired
-  public TikTokTranscriber(AWSTranscribe awsTranscribe, AWSS3 awss3) {
+  public VideoTranscriber(AWSTranscribe awsTranscribe, AWSS3 awss3) {
     this.awsTranscribe = awsTranscribe;
     this.awss3 = awss3;
   }

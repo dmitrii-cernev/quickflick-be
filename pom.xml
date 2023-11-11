@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<aws.java.sdk.version>2.21.20</aws.java.sdk.version>
+		<openai.version>0.16.1</openai.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -79,6 +80,12 @@
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>transcribe</artifactId>
+		</dependency>
+		<!--https://github.com/TheoKanning/openai-java-->
+		<dependency>
+			<groupId>com.theokanning.openai-gpt3-java</groupId>
+			<artifactId>service</artifactId>
+			<version>${openai.version}</version>
 		</dependency>
 	</dependencies>
 
