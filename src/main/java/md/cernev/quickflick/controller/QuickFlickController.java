@@ -2,6 +2,7 @@ package md.cernev.quickflick.controller;
 
 import md.cernev.quickflick.ai.OpenAIProcessorImpl;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
+import md.cernev.quickflick.service.QuickFlickServiceImpl;
 import md.cernev.quickflick.transcriber.VideoTranscriber;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,11 +11,20 @@ public class QuickFlickController {
   private final TikTokScrapper tikTokScrapper;
   private final VideoTranscriber videoTranscriber;
   private final OpenAIProcessorImpl openAIProcessor;
+  private final QuickFlickServiceImpl quickFlickService;
 
-  public QuickFlickController(TikTokScrapper tikTokScrapper, VideoTranscriber videoTranscriber, OpenAIProcessorImpl openAIProcessor) {
+  public QuickFlickController(TikTokScrapper tikTokScrapper, VideoTranscriber videoTranscriber, OpenAIProcessorImpl openAIProcessor, QuickFlickServiceImpl quickFlickService) {
     this.tikTokScrapper = tikTokScrapper;
     this.videoTranscriber = videoTranscriber;
     this.openAIProcessor = openAIProcessor;
+    this.quickFlickService = quickFlickService;
+  }
+
+
+  @GetMapping("/process/tiktok")
+  @ResponseBody
+  public String processTikTok(@RequestParam String url) {
+    return quickFlickService.process(url);
   }
 
   @GetMapping("/scrap/tiktok")

@@ -27,13 +27,15 @@ public class TikTokScrapper implements Scrapper {
    * Scraps TikTok video from the given url and saves it to the local filesystem
    *
    * @param url - url of the TikTok video
+   * @return saved file name
    */
   @Override
-  public void scrap(String url) {
-    scrapUsingRapidApi(url);
+  public String scrap(String url) {
+    return scrapUsingRapidApi(url);
   }
 
-  private void scrapUsingRapidApi(String url) {
+  private String scrapUsingRapidApi(String url) {
+    String videoFileName = getVideoFileName(url);
     try {
       AsyncHttpClient client = new DefaultAsyncHttpClient();
       client
@@ -45,13 +47,14 @@ public class TikTokScrapper implements Scrapper {
           .thenAccept(response -> {
             String body = response.getResponseBody();
             String videoUrl = new JSONObject(body).getJSONArray("url_list").getString(0);
-            saveVideo(videoUrl, getVideoFileName(url));
+            saveVideo(videoUrl, videoFileName);
           })
           .join();
       client.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    return videoFileName;
   }
 
   private void saveVideo(String videoUrl, String videoFileName) {
