@@ -16,14 +16,14 @@ public class OpenAIProcessorImpl implements AIProcessor {
   private static final String TOKEN = "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";
   private static final String SYSTEM_TASK_MESSAGE = "You are an API Server that responds in a JSON format." +
       "Don't say anything else. Respond ONLY with JSON." +
-      "The user will send you a transcription of a short video from TikTok. It can be any type of video." +
-      "Your goal is to create a title for that video based on provided text and make a short summary." +
+      "The user will send you a transcription of a short video from TikTok. It can be any type of video. Note, that videos can be in different languages, not only English." +
+      "Your goal is to create a title for that video based on provided text and make a short summary. In summary you should say about what this text was." +
       "Respond in JSON format. It should contain two elements: 'title' and 'summary', both are texts." +
       "Don't add anything else in the end of your respond after JSON";
 
   @Override
   public String summarize(String text) {
-    OpenAiService service = new OpenAiService(TOKEN, Duration.ofSeconds(40));
+    OpenAiService service = new OpenAiService(TOKEN, Duration.ofSeconds(60));
 
     List<ChatMessage> messages = new ArrayList<>();
     messages.add(new ChatMessage(ChatMessageRole.SYSTEM.value(), SYSTEM_TASK_MESSAGE));
@@ -36,8 +36,10 @@ public class OpenAIProcessorImpl implements AIProcessor {
         .build();
 
     StringBuilder stringBuilder = new StringBuilder();
+    System.out.println("Asking GPT...");
     service.createChatCompletion(chatCompletionRequest).getChoices()
         .forEach(choice -> stringBuilder.append(choice.getMessage().getContent()));
+    System.out.println("GPT responded.");
     return stringBuilder.toString();
   }
 }

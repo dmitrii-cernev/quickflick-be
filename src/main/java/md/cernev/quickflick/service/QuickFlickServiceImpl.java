@@ -5,6 +5,8 @@ import md.cernev.quickflick.scrapper.TikTokScrapper;
 import md.cernev.quickflick.transcriber.VideoTranscriber;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+
 @Service
 public class QuickFlickServiceImpl implements QuickFlickService {
   private final TikTokScrapper tikTokScrapper;
@@ -19,8 +21,9 @@ public class QuickFlickServiceImpl implements QuickFlickService {
 
   @Override
   public String process(String videoUrl) {
-    String fileName = tikTokScrapper.scrap(videoUrl);
-    String transcript = transcriber.transcribe(fileName);
+    String filePath = tikTokScrapper.scrap(videoUrl);
+    File file = new File(filePath);
+    String transcript = transcriber.transcribe(file);
     String summarize = openAIProcessor.summarize(transcript);
     return summarize;
   }

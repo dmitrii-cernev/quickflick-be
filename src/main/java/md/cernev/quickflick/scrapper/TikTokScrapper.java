@@ -22,12 +22,13 @@ public class TikTokScrapper implements Scrapper {
   public static final String USER_REGEX = "@([^\\/]+)";
   public static final String VIDEO_ID_REGEX = "\\/video\\/(\\d+)";
   public static final String RAPID_API_TIKTOK = "tiktok82.p.rapidapi.com";
+  public static final String VIDEO_DIRECTORY = "videos/";
 
   /**
    * Scraps TikTok video from the given url and saves it to the local filesystem
    *
    * @param url - url of the TikTok video
-   * @return saved file name
+   * @return saved file path
    */
   @Override
   public String scrap(String url) {
@@ -73,9 +74,9 @@ public class TikTokScrapper implements Scrapper {
     Matcher userNameMatcher = userName.matcher(videoUrl);
     Matcher videoIdMatcher = videoId.matcher(videoUrl);
     if (userNameMatcher.find() && videoIdMatcher.find()) {
-      return userNameMatcher.group(1) + "_" + videoIdMatcher.group(1) + ".mp4";
+      return VIDEO_DIRECTORY + userNameMatcher.group(1) + "_" + videoIdMatcher.group(1) + ".mp4";
     }
-    return "unnamed_video.mp4";
+    return VIDEO_DIRECTORY + "unnamed_video.mp4";
   }
 
   private void saveVideo(CloseableHttpResponse response, String filename) throws IOException {

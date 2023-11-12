@@ -6,6 +6,8 @@ import md.cernev.quickflick.service.QuickFlickServiceImpl;
 import md.cernev.quickflick.transcriber.VideoTranscriber;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+
 @RestController
 public class QuickFlickController {
   private final TikTokScrapper tikTokScrapper;
@@ -36,7 +38,8 @@ public class QuickFlickController {
   @GetMapping("/transcribe")
   @ResponseBody
   public String transcribe(@RequestParam String filename) {
-    return videoTranscriber.transcribe(filename);
+    File file = new File(filename);
+    return videoTranscriber.transcribe(file);
   }
 
   @PostMapping("/summarize")

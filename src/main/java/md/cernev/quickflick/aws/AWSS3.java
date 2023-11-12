@@ -18,18 +18,19 @@ import java.io.OutputStream;
 @Component
 public class AWSS3 {
 
-  final S3Client s3Client;
+  private final S3Client s3Client;
 
   @Autowired
   public AWSS3(S3Client s3Client) {this.s3Client = s3Client;}
 
-  public String uploadToS3(String filename) {
-    File file = new File(filename);
+  public String uploadToS3(File file, String filenameToSave) {
     System.out.println("Uploading file to server...");
-    PutObjectRequest request = PutObjectRequest.builder().bucket(AwsConfiguration.BUCKET_NAME).key(file.getName())
+    PutObjectRequest request = PutObjectRequest.builder()
+        .bucket(AwsConfiguration.BUCKET_NAME)
+        .key(filenameToSave)
         .build();
     PutObjectResponse response = s3Client.putObject(request, file.toPath());
-    String s3Location = "s3://" + AwsConfiguration.BUCKET_NAME + "/" + filename;
+    String s3Location = "s3://" + AwsConfiguration.BUCKET_NAME + "/" + filenameToSave;
 
     System.out.println("File uploaded successfully. ETag: " + response.eTag());
     return s3Location;

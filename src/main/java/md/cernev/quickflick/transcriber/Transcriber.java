@@ -1,5 +1,7 @@
 package md.cernev.quickflick.transcriber;
 
+import java.io.File;
+
 public interface Transcriber {
-  String transcribe(String filename);
+  String transcribe(File file);
 }
