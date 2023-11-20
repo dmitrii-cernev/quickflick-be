@@ -38,6 +38,7 @@ public class TikTokScrapper implements Scrapper {
   private String scrapUsingRapidApi(String url) {
     String videoFileName = getVideoFileName(url);
     try {
+      System.out.println("Started to save video...");
       AsyncHttpClient client = new DefaultAsyncHttpClient();
       client
           .prepare("GET", TIKTOK_DOWNLOAD_API + "?video_url=" + url)

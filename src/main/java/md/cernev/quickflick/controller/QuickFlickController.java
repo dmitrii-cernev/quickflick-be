@@ -4,6 +4,7 @@ import md.cernev.quickflick.ai.OpenAIProcessorImpl;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
 import md.cernev.quickflick.service.QuickFlickServiceImpl;
 import md.cernev.quickflick.transcriber.VideoTranscriber;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public class QuickFlickController {
   }
 
 
-  @GetMapping("/process/tiktok")
+  @GetMapping(value = "/process/tiktok", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public String processTikTok(@RequestParam String url) {
     return quickFlickService.process(url);

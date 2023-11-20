@@ -11,9 +11,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+import static md.cernev.quickflick.aws.AWSTranscribe.TRANSCRIPTIONS_FOLDER;
+
 @Service
 public class VideoTranscriber implements Transcriber {
 
+  public static final String VIDEOS_FOLDER = "videos/";
   private final AWSTranscribe awsTranscribe;
   private final AWSS3 awss3;
 
@@ -38,11 +41,11 @@ public class VideoTranscriber implements Transcriber {
   }
 
   private String transcriptAwsBatch(File mediaFile) {
-    String filenameToSave = "videos/" + mediaFile.getName();
+    String filenameToSave = VIDEOS_FOLDER + mediaFile.getName();
     String s3Path = awss3.uploadToS3(mediaFile, filenameToSave);
     String transcriptionJobName = awsTranscribe.startTranscriptionJob(s3Path, mediaFile.getName());
     String transcriptionJobFileKey = awsTranscribe.getTranscriptionJobFileKey(transcriptionJobName);
-    String transcriptionFileName = awss3.downloadFromS3(transcriptionJobFileKey, "transcriptions/" + transcriptionJobName + ".json");
+    String transcriptionFileName = awss3.downloadFromS3(transcriptionJobFileKey, TRANSCRIPTIONS_FOLDER + transcriptionJobName + ".json");
     return getTranscript(transcriptionFileName);
   }
 

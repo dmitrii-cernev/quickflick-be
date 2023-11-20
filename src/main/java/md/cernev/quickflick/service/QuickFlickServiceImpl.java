@@ -24,7 +24,6 @@ public class QuickFlickServiceImpl implements QuickFlickService {
     String filePath = tikTokScrapper.scrap(videoUrl);
     File file = new File(filePath);
     String transcript = transcriber.transcribe(file);
-    String summarize = openAIProcessor.summarize(transcript);
-    return summarize;
+    return openAIProcessor.summarize(transcript);
   }
 }
