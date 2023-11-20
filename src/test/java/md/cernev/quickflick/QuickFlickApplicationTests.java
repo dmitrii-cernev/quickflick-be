@@ -8,6 +8,7 @@ class QuickFlickApplicationTests {
 
 	@Test
 	void contextLoads() {
+		//default test
 	}
 
 }

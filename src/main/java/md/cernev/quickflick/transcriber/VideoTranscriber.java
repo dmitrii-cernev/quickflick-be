@@ -4,6 +4,8 @@ import md.cernev.quickflick.aws.AWSS3;
 import md.cernev.quickflick.aws.AWSTranscribe;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ import static md.cernev.quickflick.aws.AWSTranscribe.TRANSCRIPTIONS_FOLDER;
 @Service
 public class VideoTranscriber implements Transcriber {
 
+  private final Logger logger = LoggerFactory.getLogger(VideoTranscriber.class);
   public static final String VIDEOS_FOLDER = "videos/";
   private final AWSTranscribe awsTranscribe;
   private final AWSS3 awss3;
@@ -62,7 +65,7 @@ public class VideoTranscriber implements Transcriber {
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }
-    System.out.println("Successfully got the transcription.");
+    logger.info("Successfully got the transcription.");
     return transcript;
   }
 }

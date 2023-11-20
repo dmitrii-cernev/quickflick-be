@@ -4,6 +4,8 @@ import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Component
 public class OpenAIProcessorImpl implements AIProcessor {
+  private final Logger logger = LoggerFactory.getLogger(OpenAIProcessorImpl.class);
   public static final String GPT_MODEL = "gpt-3.5-turbo";
   private static final String TOKEN = "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";
   private static final String SYSTEM_TASK_MESSAGE = "You are an API Server that responds in a JSON format." +
@@ -36,10 +39,10 @@ public class OpenAIProcessorImpl implements AIProcessor {
         .build();
 
     StringBuilder stringBuilder = new StringBuilder();
-    System.out.println("Asking GPT...");
+    logger.info("Asking GPT...");
     service.createChatCompletion(chatCompletionRequest).getChoices()
         .forEach(choice -> stringBuilder.append(choice.getMessage().getContent()));
-    System.out.println("GPT responded.");
+    logger.info("GPT responded.");
     return stringBuilder.toString();
   }
 }

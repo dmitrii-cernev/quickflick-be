@@ -1,6 +1,8 @@
 package md.cernev.quickflick.aws;
 
 import md.cernev.quickflick.configuration.AwsConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.ResponseBytes;
@@ -18,13 +20,15 @@ import java.io.OutputStream;
 @Component
 public class AWSS3 {
 
+  private final Logger logger = LoggerFactory.getLogger(AWSS3.class);
+
   private final S3Client s3Client;
 
   @Autowired
   public AWSS3(S3Client s3Client) {this.s3Client = s3Client;}
 
   public String uploadToS3(File file, String filenameToSave) {
-    System.out.println("Uploading file to server...");
+    logger.info("Uploading file to server...");
     PutObjectRequest request = PutObjectRequest.builder()
         .bucket(AwsConfiguration.BUCKET_NAME)
         .key(filenameToSave)
@@ -32,7 +36,7 @@ public class AWSS3 {
     PutObjectResponse response = s3Client.putObject(request, file.toPath());
     String s3Location = "s3://" + AwsConfiguration.BUCKET_NAME + "/" + filenameToSave;
 
-    System.out.println("File uploaded successfully. ETag: " + response.eTag());
+    logger.info("File uploaded successfully. ETag: {}", response.eTag());
     return s3Location;
   }
 
@@ -47,7 +51,7 @@ public class AWSS3 {
     try {
       os = new FileOutputStream(myFile);
       os.write(data);
-      System.out.println("Successfully obtained bytes from an S3 object");
+      logger.info("Successfully obtained bytes from an S3 object");
       os.close();
     } catch (IOException e) {
       throw new RuntimeException(e);

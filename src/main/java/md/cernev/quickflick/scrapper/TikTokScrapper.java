@@ -8,6 +8,8 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -16,6 +18,7 @@ import java.util.regex.Pattern;
 
 @Service
 public class TikTokScrapper implements Scrapper {
+  private final Logger logger = LoggerFactory.getLogger(TikTokScrapper.class);
 
   public static final String TIKTOK_DOWNLOAD_API = "https://tiktok82.p.rapidapi.com/getDownloadVideo";
   public static final String RAPID_API_KEY = "e5d55f2ebdmsh1fdc26168bba541p18415cjsne46c1d57a3f9";
@@ -38,7 +41,7 @@ public class TikTokScrapper implements Scrapper {
   private String scrapUsingRapidApi(String url) {
     String videoFileName = getVideoFileName(url);
     try {
-      System.out.println("Started to save video...");
+      logger.info("Started to save video...");
       AsyncHttpClient client = new DefaultAsyncHttpClient();
       client
           .prepare("GET", TIKTOK_DOWNLOAD_API + "?video_url=" + url)
@@ -94,9 +97,9 @@ public class TikTokScrapper implements Scrapper {
         }
         content.close();
         outputStream.close();
-        System.out.println("Video saved to file: " + outputFile.getAbsolutePath());
+        logger.info("Video saved to file: {}", outputFile.getAbsolutePath());
       } catch (IOException e) {
-        e.printStackTrace();
+        logger.error("Could not save video {}", filename, e);
       }
     }
   }
