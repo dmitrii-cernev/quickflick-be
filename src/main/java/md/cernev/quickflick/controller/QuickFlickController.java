@@ -1,6 +1,7 @@
 package md.cernev.quickflick.controller;
 
 import md.cernev.quickflick.ai.OpenAIProcessorImpl;
+import md.cernev.quickflick.scrapper.InstagramScrapper;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
 import md.cernev.quickflick.service.QuickFlickServiceImpl;
 import md.cernev.quickflick.transcriber.VideoTranscriber;
@@ -12,28 +13,35 @@ import java.io.File;
 @RestController
 public class QuickFlickController {
   private final TikTokScrapper tikTokScrapper;
+  private final InstagramScrapper instagramScrapper;
   private final VideoTranscriber videoTranscriber;
   private final OpenAIProcessorImpl openAIProcessor;
   private final QuickFlickServiceImpl quickFlickService;
 
-  public QuickFlickController(TikTokScrapper tikTokScrapper, VideoTranscriber videoTranscriber, OpenAIProcessorImpl openAIProcessor, QuickFlickServiceImpl quickFlickService) {
+  public QuickFlickController(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, VideoTranscriber videoTranscriber, OpenAIProcessorImpl openAIProcessor, QuickFlickServiceImpl quickFlickService) {
     this.tikTokScrapper = tikTokScrapper;
+    this.instagramScrapper = instagramScrapper;
     this.videoTranscriber = videoTranscriber;
     this.openAIProcessor = openAIProcessor;
     this.quickFlickService = quickFlickService;
   }
 
-
-  @GetMapping(value = "/process/tiktok", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/process/{format}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public String processTikTok(@RequestParam String url) {
-    return quickFlickService.process(url);
+  public String process(@PathVariable String format, @RequestParam String url) {
+    return quickFlickService.process(url, format);
   }
 
   @GetMapping("/scrap/tiktok")
   @ResponseBody
   public void scrapTikTok(@RequestParam String url) {
     tikTokScrapper.scrap(url);
+  }
+
+  @GetMapping("/scrap/instagram")
+  @ResponseBody
+  public void scrapInstagram(@RequestParam String url) {
+    instagramScrapper.scrap(url);
   }
 
   @GetMapping("/transcribe")
