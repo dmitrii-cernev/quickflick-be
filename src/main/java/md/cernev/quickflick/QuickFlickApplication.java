@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class QuickFlickApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(QuickFlickApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(QuickFlickApplication.class, args);
+  }
 
 }

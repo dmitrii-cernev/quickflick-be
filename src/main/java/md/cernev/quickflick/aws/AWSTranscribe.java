@@ -11,10 +11,9 @@ import software.amazon.awssdk.services.transcribe.model.*;
 @Component
 public class AWSTranscribe {
 
-  private final Logger logger = LoggerFactory.getLogger(AWSTranscribe.class);
-
   public static final String TRANSCRIPTIONS_FOLDER = "transcriptions/";
   final TranscribeClient transcribeClient;
+  private final Logger logger = LoggerFactory.getLogger(AWSTranscribe.class);
 
   @Autowired
   public AWSTranscribe(TranscribeClient transcribeClient) {this.transcribeClient = transcribeClient;}

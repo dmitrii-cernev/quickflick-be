@@ -14,7 +14,6 @@ import java.util.List;
 
 @Component
 public class OpenAIProcessorImpl implements AIProcessor {
-  private final Logger logger = LoggerFactory.getLogger(OpenAIProcessorImpl.class);
   public static final String GPT_MODEL = "gpt-3.5-turbo";
   private static final String TOKEN = "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";
   private static final String SYSTEM_TASK_MESSAGE = "You are an API Server that responds in a JSON format." +
@@ -23,6 +22,7 @@ public class OpenAIProcessorImpl implements AIProcessor {
       "Your goal is to create a title for that video based on provided text and make a short summary. In summary you should say about what this text was." +
       "Respond in JSON format. It should contain two elements: 'title' and 'summary', both are texts." +
       "Don't add anything else in the end of your respond after JSON";
+  private final Logger logger = LoggerFactory.getLogger(OpenAIProcessorImpl.class);
 
   @Override
   public String summarize(String text) {

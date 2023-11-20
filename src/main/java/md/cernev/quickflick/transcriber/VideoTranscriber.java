@@ -18,8 +18,8 @@ import static md.cernev.quickflick.aws.AWSTranscribe.TRANSCRIPTIONS_FOLDER;
 @Service
 public class VideoTranscriber implements Transcriber {
 
-  private final Logger logger = LoggerFactory.getLogger(VideoTranscriber.class);
   public static final String VIDEOS_FOLDER = "videos/";
+  private final Logger logger = LoggerFactory.getLogger(VideoTranscriber.class);
   private final AWSTranscribe awsTranscribe;
   private final AWSS3 awss3;
 

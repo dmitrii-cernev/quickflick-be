@@ -18,14 +18,13 @@ import java.util.regex.Pattern;
 
 @Service
 public class TikTokScrapper implements Scrapper {
-  private final Logger logger = LoggerFactory.getLogger(TikTokScrapper.class);
-
   public static final String TIKTOK_DOWNLOAD_API = "https://tiktok82.p.rapidapi.com/getDownloadVideo";
   public static final String RAPID_API_KEY = "e5d55f2ebdmsh1fdc26168bba541p18415cjsne46c1d57a3f9";
   public static final String USER_REGEX = "@([^\\/]+)";
   public static final String VIDEO_ID_REGEX = "\\/video\\/(\\d+)";
   public static final String RAPID_API_TIKTOK = "tiktok82.p.rapidapi.com";
   public static final String VIDEO_DIRECTORY = "videos/";
+  private final Logger logger = LoggerFactory.getLogger(TikTokScrapper.class);
 
   /**
    * Scraps TikTok video from the given url and saves it to the local filesystem
