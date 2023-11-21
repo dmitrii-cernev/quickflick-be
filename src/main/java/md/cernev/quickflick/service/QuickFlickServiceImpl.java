@@ -11,6 +11,8 @@ import java.io.File;
 
 @Service
 public class QuickFlickServiceImpl implements QuickFlickService {
+  public static final String INSTAGRAM = "instagram";
+  public static final String TIKTOK = "tiktok";
   private final TikTokScrapper tikTokScrapper;
   private final InstagramScrapper instagramScrapper;
   private final VideoTranscriber transcriber;
@@ -25,14 +27,14 @@ public class QuickFlickServiceImpl implements QuickFlickService {
 
   @Override
   public String process(String videoUrl) {
-    return processTikTok(videoUrl);
+    String format = videoUrl.contains(INSTAGRAM) ? INSTAGRAM : TIKTOK;
+    return process(videoUrl, format);
   }
 
-  @Override
-  public String process(String videoUrl, String format) {
+  private String process(String videoUrl, String format) {
     return switch (format) {
-      case "tiktok" -> processTikTok(videoUrl);
-      case "instagram" -> processInstagram(videoUrl);
+      case TIKTOK -> processTikTok(videoUrl);
+      case INSTAGRAM -> processInstagram(videoUrl);
       default -> throw new RuntimeException("Unsupported video format.");
     };
 
