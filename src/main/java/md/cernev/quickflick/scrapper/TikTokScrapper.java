@@ -1,6 +1,7 @@
 package md.cernev.quickflick.scrapper;
 
 import lombok.SneakyThrows;
+import md.cernev.quickflick.storage.StorageService;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.json.JSONObject;
@@ -20,6 +21,10 @@ public class TikTokScrapper extends Scrapper {
   public static final String RAPID_API_TIKTOK = "tiktok82.p.rapidapi.com";
   private final Logger logger = LoggerFactory.getLogger(TikTokScrapper.class);
 
+  protected TikTokScrapper(StorageService storageService) {
+    super(storageService);
+  }
+
   /**
    * Scraps TikTok video from the given url and saves it to the local filesystem
    *
@@ -28,14 +33,15 @@ public class TikTokScrapper extends Scrapper {
    */
   @Override
   public String scrap(String url) {
-    return scrapUsingRapidApi(url);
+    String downloadUrl = getDownloadURL(url);
+    String filename = getFilename(url);
+    byte[] videoData = getVideoData(downloadUrl);
+    return storageService.save(videoData, filename);
   }
 
   @SneakyThrows
-  private String scrapUsingRapidApi(String url) {
-    String videoFileName = getVideoFileName(url);
-
-    logger.info("Started to save TikTok video...");
+  private String getDownloadURL(String url) {
+    logger.info("Getting TikTok video url...");
       AsyncHttpClient client = new DefaultAsyncHttpClient();
     String body = client
           .prepare("GET", TIKTOK_DOWNLOAD_API + "?video_url=" + url)
@@ -45,13 +51,10 @@ public class TikTokScrapper extends Scrapper {
           .toCompletableFuture()
         .get()
         .getResponseBody();
-    String videoUrl = new JSONObject(body).getJSONArray("url_list").getString(0);
-      client.close();
-
-    return saveVideo(videoUrl, videoFileName);
+    return new JSONObject(body).getJSONArray("url_list").getString(0);
   }
 
-  private String getVideoFileName(String videoUrl) {
+  private String getFilename(String videoUrl) {
     Pattern userName = Pattern.compile(USER_REGEX);
     Pattern videoId = Pattern.compile(VIDEO_ID_REGEX);
     Matcher userNameMatcher = userName.matcher(videoUrl);

@@ -13,6 +13,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>QuickFlick</name>
   <description>A project to summarize short videos</description>
+  <!--  <packaging>war</packaging>-->
   <properties>
     <java.version>17</java.version>
     <aws.java.sdk.version>2.21.20</aws.java.sdk.version>

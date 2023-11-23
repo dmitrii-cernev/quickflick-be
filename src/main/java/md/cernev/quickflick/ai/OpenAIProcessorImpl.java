@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 public class OpenAIProcessorImpl implements AIProcessor {
   public static final String GPT_MODEL = "gpt-3.5-turbo";
-  private static final String TOKEN = "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";
+  private static final String TOKEN = "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";
   private static final String SYSTEM_TASK_MESSAGE = "You are an API Server that responds in a JSON format." +
       "Don't say anything else. Respond ONLY with JSON." +
       "The user will send you a transcription of a short video from TikTok. It can be any type of video. Note, that videos can be in different languages, not only English." +

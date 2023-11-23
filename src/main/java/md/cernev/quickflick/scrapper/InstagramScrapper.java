@@ -1,6 +1,7 @@
 package md.cernev.quickflick.scrapper;
 
 import lombok.SneakyThrows;
+import md.cernev.quickflick.storage.StorageService;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.json.JSONObject;
@@ -17,17 +18,23 @@ public class InstagramScrapper extends Scrapper {
   private static final String INSTAGRAM_URL = "https://www.instagram.com/p/{video_id}/?__a=1&__d=dis";
   private final Logger logger = LoggerFactory.getLogger(InstagramScrapper.class);
 
+  protected InstagramScrapper(StorageService storageService) {
+    super(storageService);
+  }
+
   @Override
   public String scrap(String url) {
-    return scrapVideo(url);
+    String downloadUrl = getDownloadURL(url);
+    String filename = getVideoFileName(url);
+    byte[] videoData = getVideoData(downloadUrl);
+    return storageService.save(videoData, filename);
   }
 
   @SneakyThrows
-  private String scrapVideo(String url) {
+  private String getDownloadURL(String url) {
     String videoId = getVideoId(url);
-    String videoFileName = getVideoFileName(videoId);
     String videoInfoUrl = INSTAGRAM_URL.replace("{video_id}", videoId);
-    logger.info("Started to save Instagram video...");
+    logger.info("Getting Instagram video url...");
     AsyncHttpClient client = new DefaultAsyncHttpClient();
     String body = client
         .prepare("GET", videoInfoUrl)
@@ -35,12 +42,10 @@ public class InstagramScrapper extends Scrapper {
         .toCompletableFuture()
         .get()
         .getResponseBody();
-    String videoUrl = new JSONObject(body)
+    return new JSONObject(body)
         .getJSONObject("graphql")
         .getJSONObject("shortcode_media")
         .getString("video_url");
-    client.close();
-    return saveVideo(videoUrl, videoFileName);
   }
 
   private String getVideoId(String url) {
@@ -53,7 +58,8 @@ public class InstagramScrapper extends Scrapper {
     }
   }
 
-  String getVideoFileName(String videoId) {
+  String getVideoFileName(String url) {
+    String videoId = getVideoId(url);
     return videoId + ".mp4";
   }
 }

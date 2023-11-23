@@ -1,7 +1,10 @@
 package md.cernev.quickflick.transcriber;
 
-import java.io.File;
-
 public interface Transcriber {
-  String transcribe(File file);
+
+  /**
+   * @param filePath path to file that needs to be transcribed
+   * @return transcription text
+   */
+  String transcribe(String filePath);
 }

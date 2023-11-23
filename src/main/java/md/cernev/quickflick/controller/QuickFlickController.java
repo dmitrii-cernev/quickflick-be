@@ -4,24 +4,22 @@ import md.cernev.quickflick.ai.OpenAIProcessorImpl;
 import md.cernev.quickflick.scrapper.InstagramScrapper;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
 import md.cernev.quickflick.service.QuickFlickServiceImpl;
-import md.cernev.quickflick.transcriber.VideoTranscriber;
+import md.cernev.quickflick.transcriber.LocalTranscriber;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.File;
 
 @RestController
 public class QuickFlickController {
   private final TikTokScrapper tikTokScrapper;
   private final InstagramScrapper instagramScrapper;
-  private final VideoTranscriber videoTranscriber;
+  private final LocalTranscriber localTranscriber;
   private final OpenAIProcessorImpl openAIProcessor;
   private final QuickFlickServiceImpl quickFlickService;
 
-  public QuickFlickController(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, VideoTranscriber videoTranscriber, OpenAIProcessorImpl openAIProcessor, QuickFlickServiceImpl quickFlickService) {
+  public QuickFlickController(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, LocalTranscriber localTranscriber, OpenAIProcessorImpl openAIProcessor, QuickFlickServiceImpl quickFlickService) {
     this.tikTokScrapper = tikTokScrapper;
     this.instagramScrapper = instagramScrapper;
-    this.videoTranscriber = videoTranscriber;
+    this.localTranscriber = localTranscriber;
     this.openAIProcessor = openAIProcessor;
     this.quickFlickService = quickFlickService;
   }
@@ -47,8 +45,7 @@ public class QuickFlickController {
   @GetMapping("/transcribe")
   @ResponseBody
   public String transcribe(@RequestParam String filename) {
-    File file = new File(filename);
-    return videoTranscriber.transcribe(file);
+    return localTranscriber.transcribe(filename);
   }
 
   @PostMapping("/summarize")

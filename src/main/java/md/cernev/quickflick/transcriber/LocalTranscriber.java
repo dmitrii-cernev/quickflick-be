@@ -16,15 +16,15 @@ import java.io.FileReader;
 import static md.cernev.quickflick.aws.AWSTranscribe.TRANSCRIPTIONS_FOLDER;
 
 @Service
-public class VideoTranscriber implements Transcriber {
+public class LocalTranscriber implements Transcriber {
 
   public static final String VIDEOS_FOLDER = "videos/";
-  private final Logger logger = LoggerFactory.getLogger(VideoTranscriber.class);
+  private final Logger logger = LoggerFactory.getLogger(LocalTranscriber.class);
   private final AWSTranscribe awsTranscribe;
   private final AWSS3 awss3;
 
   @Autowired
-  public VideoTranscriber(AWSTranscribe awsTranscribe, AWSS3 awss3) {
+  public LocalTranscriber(AWSTranscribe awsTranscribe, AWSS3 awss3) {
     this.awsTranscribe = awsTranscribe;
     this.awss3 = awss3;
   }
@@ -39,7 +39,8 @@ public class VideoTranscriber implements Transcriber {
    * @return Returns transcript.
    */
   @Override
-  public String transcribe(File mediaFile) {
+  public String transcribe(String filePath) {
+    File mediaFile = new File(filePath);
     return transcriptAwsBatch(mediaFile);
   }
 
