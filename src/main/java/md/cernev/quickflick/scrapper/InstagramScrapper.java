@@ -4,9 +4,11 @@ import lombok.SneakyThrows;
 import md.cernev.quickflick.storage.StorageService;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
@@ -17,6 +19,8 @@ public class InstagramScrapper extends Scrapper {
 
   private static final String INSTAGRAM_URL = "https://www.instagram.com/p/{video_id}/?__a=1&__d=dis";
   private final Logger logger = LoggerFactory.getLogger(InstagramScrapper.class);
+  @Value("${rapidapi.key}")
+  private String rapidApiKey;
 
   protected InstagramScrapper(StorageService storageService) {
     super(storageService);
@@ -24,14 +28,36 @@ public class InstagramScrapper extends Scrapper {
 
   @Override
   public String scrap(String url) {
-    String downloadUrl = getDownloadURL(url);
+    String downloadUrl = getDownloadURLRapidAPI(url);
     String filename = getVideoFileName(url);
     byte[] videoData = getVideoData(downloadUrl);
     return storageService.save(videoData, filename);
   }
 
+  /**
+   * Limit: 100 requests per day. Note: seems like sometimes can not work.
+   *
+   * @param url
+   * @return
+   */
   @SneakyThrows
-  private String getDownloadURL(String url) {
+  private String getDownloadURLRapidAPI(String url) {
+    logger.info("Getting Instagram video url...");
+    AsyncHttpClient client = new DefaultAsyncHttpClient();
+    String body = client
+        .prepare("GET", "https://instagram-downloader-download-instagram-videos-stories1.p.rapidapi.com/?url=" + url)
+        .setHeader("X-RapidAPI-Key", rapidApiKey)
+        .setHeader("X-RapidAPI-Host", "instagram-downloader-download-instagram-videos-stories1.p.rapidapi.com")
+        .execute()
+        .get()
+        .getResponseBody();
+    String downloadUrl = new JSONArray(body).getString(0);
+    client.close();
+    return downloadUrl;
+  }
+
+  @SneakyThrows
+  private String getDownloadURLManually(String url) {
     String videoId = getVideoId(url);
     String videoInfoUrl = INSTAGRAM_URL.replace("{video_id}", videoId);
     logger.info("Getting Instagram video url...");
