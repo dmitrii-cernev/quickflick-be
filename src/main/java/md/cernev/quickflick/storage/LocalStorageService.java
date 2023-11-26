@@ -14,7 +14,12 @@ public class LocalStorageService implements StorageService {
 
   @Override
   public String save(byte[] fileData, String filename) {
-    String filePath = VIDEO_DIRECTORY + filename;
+    return save(fileData, filename, VIDEO_DIRECTORY);
+  }
+
+  @Override
+  public String save(byte[] fileData, String filename, String dir) {
+    String filePath = dir + filename;
 
     File outputFile = new File(filePath);
     try {
