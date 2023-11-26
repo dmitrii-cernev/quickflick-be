@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static md.cernev.quickflick.configuration.AwsConfiguration.VIDEOS_FOLDER;
+
 @Service
 public class TikTokScrapper extends Scrapper {
   public static final String TIKTOK_DOWNLOAD_API_1 = "https://tiktok82.p.rapidapi.com/getDownloadVideo";
@@ -41,7 +43,7 @@ public class TikTokScrapper extends Scrapper {
     String downloadUrl = getDownloadURL(url);
     String filename = getFilename(url);
     byte[] videoData = getVideoData(downloadUrl);
-    return storageService.save(videoData, filename);
+    return storageService.save(videoData, filename, VIDEOS_FOLDER);
   }
 
   @SneakyThrows

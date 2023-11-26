@@ -7,4 +7,6 @@ public interface StorageService {
    * @return Path to saved file
    */
   String save(byte[] fileData, String filename);
+
+  String save(byte[] fileData, String filename, String dir);
 }

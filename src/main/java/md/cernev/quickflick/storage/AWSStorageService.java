@@ -16,10 +16,16 @@ public class AWSStorageService implements StorageService {
 
   @Override
   public String save(byte[] fileData, String filename) {
+    return save(fileData, filename, "");
+  }
+
+  @Override
+  public String save(byte[] fileData, String filename, String dir) {
+    String path = dir + filename;
     logger.info("Uploading file to server...");
     PutObjectRequest request = PutObjectRequest.builder()
         .bucket(AwsConfiguration.BUCKET_NAME)
-        .key(filename)
+        .key(path)
         .build();
     PutObjectResponse response = s3Client.putObject(request, RequestBody.fromBytes(fileData));
     String s3Location = "s3://" + AwsConfiguration.BUCKET_NAME + "/" + filename;

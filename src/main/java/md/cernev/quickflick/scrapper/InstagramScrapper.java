@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static md.cernev.quickflick.configuration.AwsConfiguration.VIDEOS_FOLDER;
+
 @Service
 public class InstagramScrapper extends Scrapper {
 
@@ -31,7 +33,7 @@ public class InstagramScrapper extends Scrapper {
     String downloadUrl = getDownloadURLRapidAPI(url);
     String filename = getVideoFileName(url);
     byte[] videoData = getVideoData(downloadUrl);
-    return storageService.save(videoData, filename);
+    return storageService.save(videoData, filename, VIDEOS_FOLDER);
   }
 
   /**

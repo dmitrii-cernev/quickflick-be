@@ -16,6 +16,7 @@ public class AwsConfiguration {
   @Value("${aws.credentials.secretKey}")
   public String secretKey;
   public static final String BUCKET_NAME = "quickflick-buckeet";
+  public static final String VIDEOS_FOLDER = "videos/";
 
 
   @Bean
