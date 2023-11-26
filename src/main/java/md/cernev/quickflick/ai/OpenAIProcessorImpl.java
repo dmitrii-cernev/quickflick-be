@@ -6,6 +6,7 @@ import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -15,7 +16,8 @@ import java.util.List;
 @Component
 public class OpenAIProcessorImpl implements AIProcessor {
   public static final String GPT_MODEL = "gpt-3.5-turbo";
-  private static final String TOKEN = "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";
+  @Value("${openai.api.key}")
+  private String token;
   private static final String SYSTEM_TASK_MESSAGE = "You are an API Server that responds in a JSON format." +
       "Don't say anything else. Respond ONLY with JSON." +
       "The user will send you a transcription of a short video from TikTok. It can be any type of video. Note, that videos can be in different languages, not only English." +
@@ -26,7 +28,7 @@ public class OpenAIProcessorImpl implements AIProcessor {
 
   @Override
   public String summarize(String text) {
-    OpenAiService service = new OpenAiService(TOKEN, Duration.ofSeconds(60));
+    OpenAiService service = new OpenAiService(token, Duration.ofSeconds(60));
 
     List<ChatMessage> messages = new ArrayList<>();
     messages.add(new ChatMessage(ChatMessageRole.SYSTEM.value(), SYSTEM_TASK_MESSAGE));

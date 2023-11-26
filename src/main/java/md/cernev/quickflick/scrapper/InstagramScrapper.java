@@ -42,6 +42,25 @@ public class InstagramScrapper extends Scrapper {
         .toCompletableFuture()
         .get()
         .getResponseBody();
+    //for some reason there are different types of response
+    JSONObject jsonObject = new JSONObject(body);
+    if (jsonObject.has("status") && jsonObject.getString("status").equals("fail")) {
+      logger.warn("Error with getting Instagram URL.");
+      throw new RuntimeException(jsonObject.getString("message"));
+    }
+    return jsonObject.has("graphql") ? getStringWithGraphQLResponse(body) : getRegularResponse(body);
+  }
+
+  private String getRegularResponse(String body) {
+    return new JSONObject(body)
+        .getJSONArray("items")
+        .getJSONObject(0)
+        .getJSONArray("video_versions")
+        .getJSONObject(0)
+        .getString("url");
+  }
+
+  private String getStringWithGraphQLResponse(String body) {
     return new JSONObject(body)
         .getJSONObject("graphql")
         .getJSONObject("shortcode_media")

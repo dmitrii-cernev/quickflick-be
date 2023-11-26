@@ -1,6 +1,7 @@
 package md.cernev.quickflick.aws;
 
 import md.cernev.quickflick.configuration.AwsConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,8 @@ public class AWSTranscribe {
   public AWSTranscribe(TranscribeClient transcribeClient) {this.transcribeClient = transcribeClient;}
 
 
-  public String startTranscriptionJob(String mediaFileUri, String filename) {
-    String transcriptionJobName = filename.replace(".mp4", "-job");
-
+  public String startTranscriptionJob(String mediaFileUri) {
+    String transcriptionJobName = getTranscriptionJobName(mediaFileUri);
     StartTranscriptionJobRequest startTranscriptionJobRequest = StartTranscriptionJobRequest.builder()
         .identifyLanguage(true)
         .transcriptionJobName(transcriptionJobName)
@@ -32,6 +32,11 @@ public class AWSTranscribe {
     logger.info("Starting transcription job {}", transcriptionJobName);
     transcribeClient.startTranscriptionJob(startTranscriptionJobRequest);
     return transcriptionJobName;
+  }
+
+  @NotNull
+  private String getTranscriptionJobName(String mediaFileUri) {
+    return String.valueOf(mediaFileUri.hashCode()) + System.currentTimeMillis();
   }
 
   public String getTranscriptionJobFileKey(String transcriptionJobName) {

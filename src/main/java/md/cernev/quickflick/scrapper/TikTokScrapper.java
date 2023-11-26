@@ -9,16 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class TikTokScrapper extends Scrapper {
-  public static final String TIKTOK_DOWNLOAD_API = "https://tiktok82.p.rapidapi.com/getDownloadVideo";
+  public static final String TIKTOK_DOWNLOAD_API_1 = "https://tiktok82.p.rapidapi.com/getDownloadVideo";
+  public static final String TIKTOK_DOWNLOAD_API_2 = "https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/index";
   public static final String RAPID_API_KEY = "e5d55f2ebdmsh1fdc26168bba541p18415cjsne46c1d57a3f9";
   public static final String USER_REGEX = "@([^\\/]+)";
   public static final String VIDEO_ID_REGEX = "\\/video\\/(\\d+)";
-  public static final String RAPID_API_TIKTOK = "tiktok82.p.rapidapi.com";
+  public static final String RAPID_API_TIKTOK_1 = "tiktok82.p.rapidapi.com";
+  public static final String RAPID_API_TIKTOK_2 = "tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com";
   private final Logger logger = LoggerFactory.getLogger(TikTokScrapper.class);
 
   protected TikTokScrapper(StorageService storageService) {
@@ -43,15 +46,31 @@ public class TikTokScrapper extends Scrapper {
   private String getDownloadURL(String url) {
     logger.info("Getting TikTok video url...");
       AsyncHttpClient client = new DefaultAsyncHttpClient();
+    return getUsingRapidAPI2(url, client);
+  }
+
+  private String getUsingRapiAPI1(String url, AsyncHttpClient client) throws InterruptedException, ExecutionException {
     String body = client
-          .prepare("GET", TIKTOK_DOWNLOAD_API + "?video_url=" + url)
+        .prepare("GET", TIKTOK_DOWNLOAD_API_1 + "?video_url=" + url)
           .setHeader("X-RapidAPI-Key", RAPID_API_KEY)
-          .setHeader("X-RapidAPI-Host", RAPID_API_TIKTOK)
+        .setHeader("X-RapidAPI-Host", RAPID_API_TIKTOK_1)
           .execute()
           .toCompletableFuture()
         .get()
         .getResponseBody();
     return new JSONObject(body).getJSONArray("url_list").getString(0);
+  }
+
+  private String getUsingRapidAPI2(String url, AsyncHttpClient client) throws InterruptedException, ExecutionException {
+    String body = client
+        .prepare("GET", TIKTOK_DOWNLOAD_API_2 + "?url=" + url)
+        .setHeader("X-RapidAPI-Key", RAPID_API_KEY)
+        .setHeader("X-RapidAPI-Host", RAPID_API_TIKTOK_2)
+        .execute()
+        .toCompletableFuture()
+        .get()
+        .getResponseBody();
+    return new JSONObject(body).getJSONArray("video").getString(0);
   }
 
   private String getFilename(String videoUrl) {

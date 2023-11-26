@@ -3,8 +3,9 @@ package md.cernev.quickflick.service;
 import md.cernev.quickflick.ai.OpenAIProcessorImpl;
 import md.cernev.quickflick.scrapper.InstagramScrapper;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
-import md.cernev.quickflick.transcriber.LocalTranscriber;
+import md.cernev.quickflick.transcriber.Transcriber;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,10 +14,10 @@ public class QuickFlickServiceImpl implements QuickFlickService {
   public static final String TIKTOK = "tiktok";
   private final TikTokScrapper tikTokScrapper;
   private final InstagramScrapper instagramScrapper;
-  private final LocalTranscriber transcriber;
+  private final Transcriber transcriber;
   private final OpenAIProcessorImpl openAIProcessor;
 
-  public QuickFlickServiceImpl(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, LocalTranscriber transcriber, OpenAIProcessorImpl openAIProcessor) {
+  public QuickFlickServiceImpl(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, @Qualifier("AWSTranscriber") Transcriber transcriber, OpenAIProcessorImpl openAIProcessor) {
     this.tikTokScrapper = tikTokScrapper;
     this.instagramScrapper = instagramScrapper;
     this.transcriber = transcriber;

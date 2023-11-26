@@ -36,6 +36,7 @@ public class LocalTranscriber implements Transcriber {
    * 3. Returns transcript.
    *
    * @param mediaFile local media file.
+   * @param filePath
    * @return Returns transcript.
    */
   @Override
@@ -45,9 +46,9 @@ public class LocalTranscriber implements Transcriber {
   }
 
   private String transcriptAwsBatch(File mediaFile) {
-    String filenameToSave = VIDEOS_FOLDER + mediaFile.getName();
-    String s3Path = awss3.uploadToS3(mediaFile, filenameToSave);
-    String transcriptionJobName = awsTranscribe.startTranscriptionJob(s3Path, mediaFile.getName());
+    String filenameToSaveOnS3 = VIDEOS_FOLDER + mediaFile.getName();
+    String s3Path = awss3.uploadToS3(mediaFile, filenameToSaveOnS3);
+    String transcriptionJobName = awsTranscribe.startTranscriptionJob(s3Path);
     String transcriptionJobFileKey = awsTranscribe.getTranscriptionJobFileKey(transcriptionJobName);
     String transcriptionFileName = awss3.downloadFromS3(transcriptionJobFileKey, TRANSCRIPTIONS_FOLDER + transcriptionJobName + ".json");
     return getTranscript(transcriptionFileName);
