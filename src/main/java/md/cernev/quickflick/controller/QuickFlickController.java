@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+//todo: should not be global
+@CrossOrigin
 public class QuickFlickController {
   private final TikTokScrapper tikTokScrapper;
   private final InstagramScrapper instagramScrapper;

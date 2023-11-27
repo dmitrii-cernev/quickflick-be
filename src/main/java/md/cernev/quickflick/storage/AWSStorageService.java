@@ -28,9 +28,9 @@ public class AWSStorageService implements StorageService {
         .key(path)
         .build();
     PutObjectResponse response = s3Client.putObject(request, RequestBody.fromBytes(fileData));
-    String s3Location = "s3://" + AwsConfiguration.BUCKET_NAME + "/" + filename;
+    String s3Location = "s3://" + AwsConfiguration.BUCKET_NAME + "/" + dir + filename;
 
-    logger.info("File uploaded successfully. ETag: {}", response.eTag());
+    logger.info("File uploaded successfully. Location: {}", s3Location);
     return s3Location;
   }
 }

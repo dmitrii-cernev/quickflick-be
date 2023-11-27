@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static md.cernev.quickflick.configuration.AwsConfiguration.VIDEOS_FOLDER;
 
@@ -87,13 +85,6 @@ public class TikTokScrapper extends Scrapper {
   }
 
   private String getFilename(String videoUrl) {
-    Pattern userName = Pattern.compile(USER_REGEX);
-    Pattern videoId = Pattern.compile(VIDEO_ID_REGEX);
-    Matcher userNameMatcher = userName.matcher(videoUrl);
-    Matcher videoIdMatcher = videoId.matcher(videoUrl);
-    if (userNameMatcher.find() && videoIdMatcher.find()) {
-      return userNameMatcher.group(1) + "_" + videoIdMatcher.group(1) + ".mp4";
-    }
-    return "unnamed_video.mp4";
+    return videoUrl.hashCode() + ".mp4";
   }
 }

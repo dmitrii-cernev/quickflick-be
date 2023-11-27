@@ -29,7 +29,7 @@ public class AWSTranscribe {
         .outputKey(TRANSCRIPTIONS_FOLDER)
         .media(builder -> builder.mediaFileUri(mediaFileUri).build()).mediaFormat(MediaFormat.MP4)
         .build();
-    logger.info("Starting transcription job {}", transcriptionJobName);
+    logger.info("Starting transcription job {} for file {}", transcriptionJobName, mediaFileUri);
     transcribeClient.startTranscriptionJob(startTranscriptionJobRequest);
     return transcriptionJobName;
   }
