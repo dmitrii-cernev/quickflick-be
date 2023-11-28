@@ -11,7 +11,6 @@ public class StorageConfiguration {
 
   @Bean
   StorageService storageService(S3Client s3Client) {
-//    return new LocalStorageService();
     return new AWSStorageService(s3Client);
   }
 }

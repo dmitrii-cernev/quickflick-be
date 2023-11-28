@@ -16,14 +16,10 @@ import static md.cernev.quickflick.configuration.AwsConfiguration.VIDEOS_FOLDER;
 
 @Service
 public class TikTokScrapper extends Scrapper {
-  public static final String TIKTOK_DOWNLOAD_API_1 = "https://tiktok82.p.rapidapi.com/getDownloadVideo";
-  public static final String TIKTOK_DOWNLOAD_API_2 = "https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/index";
+  public static final String TIKTOK_DOWNLOAD_API = "https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/index";
   @Value("${rapidapi.key}")
   private String rapidApiKey;
-  public static final String USER_REGEX = "@([^\\/]+)";
-  public static final String VIDEO_ID_REGEX = "\\/video\\/(\\d+)";
-  public static final String RAPID_API_TIKTOK_1 = "tiktok82.p.rapidapi.com";
-  public static final String RAPID_API_TIKTOK_2 = "tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com";
+  public static final String RAPID_API_TIKTOK = "tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com";
   private final Logger logger = LoggerFactory.getLogger(TikTokScrapper.class);
 
   protected TikTokScrapper(StorageService storageService) {
@@ -48,19 +44,7 @@ public class TikTokScrapper extends Scrapper {
   private String getDownloadURL(String url) {
     logger.info("Getting TikTok video url...");
       AsyncHttpClient client = new DefaultAsyncHttpClient();
-    return getUsingRapidAPI2(url, client);
-  }
-
-  private String getUsingRapiAPI1(String url, AsyncHttpClient client) throws InterruptedException, ExecutionException {
-    String body = client
-        .prepare("GET", TIKTOK_DOWNLOAD_API_1 + "?video_url=" + url)
-        .setHeader("X-RapidAPI-Key", rapidApiKey)
-        .setHeader("X-RapidAPI-Host", RAPID_API_TIKTOK_1)
-          .execute()
-          .toCompletableFuture()
-        .get()
-        .getResponseBody();
-    return new JSONObject(body).getJSONArray("url_list").getString(0);
+    return getUsingRapidAPI(url, client);
   }
 
   /**
@@ -72,11 +56,11 @@ public class TikTokScrapper extends Scrapper {
    * @throws InterruptedException
    * @throws ExecutionException
    */
-  private String getUsingRapidAPI2(String url, AsyncHttpClient client) throws InterruptedException, ExecutionException {
+  private String getUsingRapidAPI(String url, AsyncHttpClient client) throws InterruptedException, ExecutionException {
     String body = client
-        .prepare("GET", TIKTOK_DOWNLOAD_API_2 + "?url=" + url)
+        .prepare("GET", TIKTOK_DOWNLOAD_API + "?url=" + url)
         .setHeader("X-RapidAPI-Key", rapidApiKey)
-        .setHeader("X-RapidAPI-Host", RAPID_API_TIKTOK_2)
+        .setHeader("X-RapidAPI-Host", RAPID_API_TIKTOK)
         .execute()
         .toCompletableFuture()
         .get()
