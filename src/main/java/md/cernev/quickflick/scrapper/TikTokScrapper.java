@@ -43,8 +43,7 @@ public class TikTokScrapper extends Scrapper {
   @SneakyThrows
   private String getDownloadURL(String url) {
     logger.info("Getting TikTok video url...");
-      AsyncHttpClient client = new DefaultAsyncHttpClient();
-    return getUsingRapidAPI(url, client);
+    return getUsingRapidAPI(url);
   }
 
   /**
@@ -56,7 +55,8 @@ public class TikTokScrapper extends Scrapper {
    * @throws InterruptedException
    * @throws ExecutionException
    */
-  private String getUsingRapidAPI(String url, AsyncHttpClient client) throws InterruptedException, ExecutionException {
+  private String getUsingRapidAPI(String url) throws InterruptedException, ExecutionException {
+    AsyncHttpClient client = new DefaultAsyncHttpClient();
     String body = client
         .prepare("GET", TIKTOK_DOWNLOAD_API + "?url=" + url)
         .setHeader("X-RapidAPI-Key", rapidApiKey)

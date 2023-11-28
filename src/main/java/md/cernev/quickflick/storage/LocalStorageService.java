@@ -10,12 +10,6 @@ import java.io.OutputStream;
 
 public class LocalStorageService implements StorageService {
   public static final Logger logger = LoggerFactory.getLogger(LocalStorageService.class);
-  public static final String VIDEO_DIRECTORY = "videos/";
-
-  @Override
-  public String save(byte[] fileData, String filename) {
-    return save(fileData, filename, VIDEO_DIRECTORY);
-  }
 
   @Override
   public String save(byte[] fileData, String filename, String dir) {

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
@@ -30,6 +31,14 @@ public class AwsConfiguration {
   @Bean
   public S3Client getS3Client() {
     return S3Client.builder()
+        .credentialsProvider(this::getCredentials)
+        .region(REGION)
+        .build();
+  }
+
+  @Bean
+  public S3AsyncClient s3AsyncClient() {
+    return S3AsyncClient.builder()
         .credentialsProvider(this::getCredentials)
         .region(REGION)
         .build();

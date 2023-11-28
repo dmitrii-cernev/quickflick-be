@@ -14,11 +14,6 @@ public class AWSStorageService implements StorageService {
   public AWSStorageService(S3Client s3Client) {this.s3Client = s3Client;}
 
   @Override
-  public String save(byte[] fileData, String filename) {
-    return save(fileData, filename, "");
-  }
-
-  @Override
   public String save(byte[] fileData, String filename, String dir) {
     String path = dir + filename;
     logger.info("Uploading file to server...");
