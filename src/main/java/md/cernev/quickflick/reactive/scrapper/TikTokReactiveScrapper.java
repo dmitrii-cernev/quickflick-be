@@ -1,6 +1,7 @@
 package md.cernev.quickflick.reactive.scrapper;
 
 import md.cernev.quickflick.reactive.storage.AWSReactiveStorageService;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.nio.ByteBuffer;
 
 @Component
 public class TikTokReactiveScrapper {
@@ -17,6 +20,7 @@ public class TikTokReactiveScrapper {
   private final Logger logger = LoggerFactory.getLogger(TikTokReactiveScrapper.class);
   private final AWSReactiveStorageService storageService;
   private final String rapidApiKey;
+  private final WebClient webClient = WebClient.create();
 
   @Autowired
   public TikTokReactiveScrapper(AWSReactiveStorageService storageService, @Value("${rapidapi.key}") String rapidApiKey) {
@@ -26,23 +30,19 @@ public class TikTokReactiveScrapper {
 
   public Mono<String> scrap(String url) {
     return Mono.defer(() -> {
-      String downloadUrl = getDownloadURL(url);
       String filepath = getFilepath(url);
-
-      return WebClient.create()
-          .get()
-          .uri(downloadUrl)
+      return webClient
+          .get().uri(TIKTOK_DOWNLOAD_API + "?url=" + url)
           .header("X-RapidAPI-Key", rapidApiKey)
           .header("X-RapidAPI-Host", RAPID_API_TIKTOK)
-          .retrieve()
-          .bodyToMono(byte[].class)
-          .flatMap(videoData -> storageService.save(videoData, filepath));
+          .retrieve().bodyToMono(String.class)
+          .map(body -> new JSONObject(body).getJSONArray("video").getString(0)) // get download url
+          .flatMap(downloadUrl -> webClient.get().uri(downloadUrl).exchangeToMono(clientResponse -> {
+            logger.info("Getting video content...");
+            long contentLength = clientResponse.headers().asHttpHeaders().getContentLength();
+            return storageService.save(clientResponse.bodyToFlux(ByteBuffer.class), filepath, contentLength);
+          }));
     });
-  }
-
-  private String getDownloadURL(String url) {
-    logger.info("Getting TikTok video URL...");
-    return TIKTOK_DOWNLOAD_API + "?url=" + url;
   }
 
   private String getFilepath(String videoUrl) {
