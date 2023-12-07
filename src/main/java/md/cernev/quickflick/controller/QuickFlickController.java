@@ -28,8 +28,8 @@ public class QuickFlickController {
 
   @GetMapping(value = "/process", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public String process(@RequestParam String url) {
-    return quickFlickService.process(url);
+  public String process(@RequestParam String url, @RequestParam String userIp) {
+    return quickFlickService.process(url, userIp);
   }
 
   @GetMapping("/scrap/tiktok")
