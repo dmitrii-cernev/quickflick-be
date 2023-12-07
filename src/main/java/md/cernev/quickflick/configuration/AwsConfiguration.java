@@ -7,6 +7,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.transcribe.TranscribeAsyncClient;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
 @Configuration
@@ -39,6 +40,14 @@ public class AwsConfiguration {
   @Bean
   public S3AsyncClient s3AsyncClient() {
     return S3AsyncClient.builder()
+        .credentialsProvider(this::getCredentials)
+        .region(REGION)
+        .build();
+  }
+
+  @Bean
+  public TranscribeAsyncClient transcribeAsyncClient() {
+    return TranscribeAsyncClient.builder()
         .credentialsProvider(this::getCredentials)
         .region(REGION)
         .build();
