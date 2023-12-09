@@ -32,6 +32,12 @@ public class QuickFlickController {
     return quickFlickService.process(url, userIp);
   }
 
+  @GetMapping(value = "/get/{userIp}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public String getByUserIP(@PathVariable String userIp) {
+    return quickFlickService.getTranscriptionsByUserIP(userIp);
+  }
+
   @GetMapping("/scrap/tiktok")
   @ResponseBody
   public void scrapTikTok(@RequestParam String url) {

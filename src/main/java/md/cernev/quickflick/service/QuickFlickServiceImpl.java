@@ -2,19 +2,21 @@ package md.cernev.quickflick.service;
 
 import md.cernev.quickflick.ai.OpenAIProcessorImpl;
 import md.cernev.quickflick.aws.AWSDynamoDb;
+import md.cernev.quickflick.dto.TranscriptionDto;
 import md.cernev.quickflick.entity.TranscriptionEntity;
 import md.cernev.quickflick.scrapper.InstagramScrapper;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
 import md.cernev.quickflick.transcriber.Transcriber;
 import md.cernev.quickflick.util.Format;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
-import static md.cernev.quickflick.util.Format.INSTAGRAM;
-import static md.cernev.quickflick.util.Format.TIKTOK;
+import static md.cernev.quickflick.util.Format.*;
 
 @Service
 public class QuickFlickServiceImpl implements QuickFlickService {
@@ -36,19 +38,23 @@ public class QuickFlickServiceImpl implements QuickFlickService {
 
   @Override
   public String process(String videoUrl) {
-    Format format = videoUrl.contains(INSTAGRAM.getFormat()) ? INSTAGRAM : TIKTOK;
-    transcriptionEntity.setUserIp("0.0.0.0");
-    return process(videoUrl, format);
+    return process(videoUrl, "0.0.0.0");
   }
 
   @Override
   public String process(String videoUrl, String userIp) {
-    Format format = videoUrl.contains(INSTAGRAM.getFormat()) ? INSTAGRAM : TIKTOK;
     transcriptionEntity.setUserIp(userIp);
-    return process(videoUrl, format);
+    return processVideoURL(videoUrl);
   }
 
-  private String process(String videoUrl, Format format) {
+  @Override
+  public String getTranscriptionsByUserIP(String userIp) {
+    List<TranscriptionDto> items = awsDynamoDb.getTranscriptionsByUserIP(userIp);
+    return new JSONArray(items).toString();
+  }
+
+  private String processVideoURL(String videoUrl) {
+    Format format = getFormat(videoUrl);
     transcriptionEntity.setVideoUrl(videoUrl);
     transcriptionEntity.setPlatform(format.getFormat());
     return switch (format) {
@@ -57,6 +63,15 @@ public class QuickFlickServiceImpl implements QuickFlickService {
       default -> throw new RuntimeException("Unsupported video format.");
     };
 
+  }
+
+  private Format getFormat(String videoUrl) {
+    if (videoUrl.contains("tiktok")) {
+      return TIKTOK;
+    } else if (videoUrl.contains("instagram")) {
+      return INSTAGRAM;
+    }
+    return UNKNOWN;
   }
 
   private String processTikTok(String videoUrl) {

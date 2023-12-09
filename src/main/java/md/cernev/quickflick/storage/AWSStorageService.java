@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 public class AWSStorageService implements StorageService {
   private static final Logger logger = LoggerFactory.getLogger(AWSStorageService.class);
@@ -27,7 +26,7 @@ public class AWSStorageService implements StorageService {
         .bucket(AwsConfiguration.BUCKET_NAME)
         .key(path)
         .build();
-    PutObjectResponse response = s3Client.putObject(request, RequestBody.fromBytes(fileData));
+    s3Client.putObject(request, RequestBody.fromBytes(fileData));
     String s3Location = "s3://" + AwsConfiguration.BUCKET_NAME + "/" + dir + filename;
 
     logger.info("File uploaded successfully. Location: {}", s3Location);

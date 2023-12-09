@@ -20,4 +20,5 @@ public class TranscriptionEntity {
   private String title;
   private String description;
   private String transcription;
+  //todo: add date
 }

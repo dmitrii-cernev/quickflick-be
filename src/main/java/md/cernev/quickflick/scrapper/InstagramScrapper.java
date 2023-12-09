@@ -5,7 +5,6 @@ import md.cernev.quickflick.storage.StorageService;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,43 +55,6 @@ public class InstagramScrapper extends Scrapper {
     String downloadUrl = new JSONArray(body).getString(0);
     client.close();
     return downloadUrl;
-  }
-
-  @SneakyThrows
-  private String getDownloadURLManually(String url) {
-    String videoId = getVideoId(url);
-    String videoInfoUrl = INSTAGRAM_URL.replace("{video_id}", videoId);
-    logger.info("Getting Instagram video url...");
-    AsyncHttpClient client = new DefaultAsyncHttpClient();
-    String body = client
-        .prepare("GET", videoInfoUrl)
-        .execute()
-        .toCompletableFuture()
-        .get()
-        .getResponseBody();
-    //for some reason there are different types of response
-    JSONObject jsonObject = new JSONObject(body);
-    if (jsonObject.has("status") && jsonObject.getString("status").equals("fail")) {
-      logger.warn("Error with getting Instagram URL.");
-      throw new RuntimeException(jsonObject.getString("message"));
-    }
-    return jsonObject.has("graphql") ? getStringWithGraphQLResponse(body) : getRegularResponse(body);
-  }
-
-  private String getRegularResponse(String body) {
-    return new JSONObject(body)
-        .getJSONArray("items")
-        .getJSONObject(0)
-        .getJSONArray("video_versions")
-        .getJSONObject(0)
-        .getString("url");
-  }
-
-  private String getStringWithGraphQLResponse(String body) {
-    return new JSONObject(body)
-        .getJSONObject("graphql")
-        .getJSONObject("shortcode_media")
-        .getString("video_url");
   }
 
   private String getVideoId(String url) {

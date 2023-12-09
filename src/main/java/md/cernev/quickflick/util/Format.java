@@ -2,7 +2,8 @@ package md.cernev.quickflick.util;
 
 public enum Format {
   TIKTOK("tiktok"),
-  INSTAGRAM("instagram");
+  INSTAGRAM("instagram"),
+  UNKNOWN("unknown");
 
   private final String format;
 
