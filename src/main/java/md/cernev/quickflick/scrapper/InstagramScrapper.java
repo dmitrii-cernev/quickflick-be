@@ -18,7 +18,6 @@ import static md.cernev.quickflick.configuration.AwsConfiguration.VIDEOS_FOLDER;
 @Service
 public class InstagramScrapper extends Scrapper {
 
-  private static final String INSTAGRAM_URL = "https://www.instagram.com/p/{video_id}/?__a=1&__d=dis";
   private final Logger logger = LoggerFactory.getLogger(InstagramScrapper.class);
   @Value("${rapidapi.key}")
   private String rapidApiKey;
@@ -52,7 +51,7 @@ public class InstagramScrapper extends Scrapper {
         .execute()
         .get()
         .getResponseBody();
-    String downloadUrl = new JSONArray(body).getString(0);
+    String downloadUrl = new JSONArray(body).getJSONObject(0).getString("url");
     client.close();
     return downloadUrl;
   }
