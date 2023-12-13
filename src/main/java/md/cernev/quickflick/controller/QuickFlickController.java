@@ -2,9 +2,9 @@ package md.cernev.quickflick.controller;
 
 import md.cernev.quickflick.ai.OpenAIProcessorImpl;
 import md.cernev.quickflick.scrapper.InstagramScrapper;
+import md.cernev.quickflick.scrapper.ShortsScrapper;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
 import md.cernev.quickflick.service.QuickFlickServiceImpl;
-import md.cernev.quickflick.transcriber.LocalTranscriber;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 public class QuickFlickController {
   private final TikTokScrapper tikTokScrapper;
   private final InstagramScrapper instagramScrapper;
-  private final LocalTranscriber localTranscriber;
+  private final ShortsScrapper shortsScrapper;
   private final OpenAIProcessorImpl openAIProcessor;
   private final QuickFlickServiceImpl quickFlickService;
 
-  public QuickFlickController(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, LocalTranscriber localTranscriber, OpenAIProcessorImpl openAIProcessor, QuickFlickServiceImpl quickFlickService) {
+  public QuickFlickController(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, ShortsScrapper shortsScrapper, OpenAIProcessorImpl openAIProcessor, QuickFlickServiceImpl quickFlickService) {
     this.tikTokScrapper = tikTokScrapper;
     this.instagramScrapper = instagramScrapper;
-    this.localTranscriber = localTranscriber;
+    this.shortsScrapper = shortsScrapper;
     this.openAIProcessor = openAIProcessor;
     this.quickFlickService = quickFlickService;
   }
@@ -50,10 +50,10 @@ public class QuickFlickController {
     instagramScrapper.scrap(url);
   }
 
-  @GetMapping("/transcribe")
+  @GetMapping("/scrap/shorts")
   @ResponseBody
-  public String transcribe(@RequestParam String filename) {
-    return localTranscriber.transcribe(filename);
+  public void scrapShorts(@RequestParam String url) {
+    shortsScrapper.scrap(url);
   }
 
   @PostMapping("/summarize")

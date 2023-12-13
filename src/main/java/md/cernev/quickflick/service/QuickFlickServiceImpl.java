@@ -5,12 +5,12 @@ import md.cernev.quickflick.aws.AWSDynamoDb;
 import md.cernev.quickflick.dto.TranscriptionDto;
 import md.cernev.quickflick.entity.TranscriptionEntity;
 import md.cernev.quickflick.scrapper.InstagramScrapper;
+import md.cernev.quickflick.scrapper.ShortsScrapper;
 import md.cernev.quickflick.scrapper.TikTokScrapper;
 import md.cernev.quickflick.transcriber.Transcriber;
 import md.cernev.quickflick.util.Format;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,14 +22,16 @@ import static md.cernev.quickflick.util.Format.*;
 public class QuickFlickServiceImpl implements QuickFlickService {
   private final TikTokScrapper tikTokScrapper;
   private final InstagramScrapper instagramScrapper;
+  private final ShortsScrapper shortsScrapper;
   private final Transcriber transcriber;
   private final OpenAIProcessorImpl openAIProcessor;
   private final AWSDynamoDb awsDynamoDb;
   private final TranscriptionEntity transcriptionEntity = new TranscriptionEntity();
 
-  public QuickFlickServiceImpl(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, @Qualifier("AWSTranscriber") Transcriber transcriber, OpenAIProcessorImpl openAIProcessor, AWSDynamoDb awsDynamoDb) {
+  public QuickFlickServiceImpl(TikTokScrapper tikTokScrapper, InstagramScrapper instagramScrapper, ShortsScrapper shortsScrapper, Transcriber transcriber, OpenAIProcessorImpl openAIProcessor, AWSDynamoDb awsDynamoDb) {
     this.tikTokScrapper = tikTokScrapper;
     this.instagramScrapper = instagramScrapper;
+    this.shortsScrapper = shortsScrapper;
     this.transcriber = transcriber;
     this.openAIProcessor = openAIProcessor;
     this.awsDynamoDb = awsDynamoDb;
@@ -60,6 +62,7 @@ public class QuickFlickServiceImpl implements QuickFlickService {
     return switch (format) {
       case TIKTOK -> processTikTok(videoUrl);
       case INSTAGRAM -> processInstagram(videoUrl);
+      case SHORTS -> processShorts(videoUrl);
       default -> throw new RuntimeException("Unsupported video format.");
     };
 
@@ -70,8 +73,16 @@ public class QuickFlickServiceImpl implements QuickFlickService {
       return TIKTOK;
     } else if (videoUrl.contains("instagram")) {
       return INSTAGRAM;
+    } else if (videoUrl.contains("youtube")) {
+      return SHORTS;
+    } else {
+      return UNKNOWN;
     }
-    return UNKNOWN;
+  }
+
+  private String processShorts(String videoUrl) {
+    String filePath = shortsScrapper.scrap(videoUrl);
+    return processVideo(filePath);
   }
 
   private String processTikTok(String videoUrl) {
